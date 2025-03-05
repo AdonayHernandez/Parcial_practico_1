@@ -1,13 +1,13 @@
 CREATE DATABASE logisticDB;
 USE logisticDB;
 
--- Tabla de TipoCombustible  --
+-- Tabla  TipoCombustible  --
 CREATE TABLE TipoCombustible (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL
 );
 
--- Tabla de Vehículos --
+-- Tabla  Vehículos --
 CREATE TABLE Vehiculo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     matricula VARCHAR(20) UNIQUE NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE Vehiculo (
     FOREIGN KEY (id_tipo_combustible) REFERENCES TipoCombustible(id)
 );
 
--- Tabla de Almacenes --
+-- Tabla  Almacenes --
 CREATE TABLE Almacen (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -145,7 +145,7 @@ VALUES
 INSERT INTO Vehiculo (matricula, marca, modelo, anio, capacidad_carga, id_tipo_combustible, consumo_promedio, fecha_adquisicion, estado)
 VALUES 
     ('123ABC', 'Toyota', 'Dyna', 2025, 15000.00, 1, 25.5, '2025-02-28', 'Activo'),
-    ('456DEF', 'Isuzu', 'NPR', 2024, 12000.00, 2, 20.0, '2024-10-25', 'En mantenimiento');
+    ('456DEF', 'Isuzu', 'NPR', 2025, 12000.00, 2, 20.0, '2025-2-27', 'En mantenimiento');
 
 -- Insertar clientes --
 INSERT INTO Cliente (nombre_empresa, sector_actividad, direccion_fiscal, persona_contacto, limite_credito, clasificacion)
@@ -164,25 +164,64 @@ VALUES
     ('VERCT001', 'Televisor 43 pulgadas', 1, '120x70x10 cm', 15.5, 1200.00, 'Frágil', 1),
     ('MUEBL002', 'Sofá de 3 plazas', 2, '200x90x100 cm', 50.0, 850.00, 'Manipular con cuidado', 2);
 
--- Insertar un almacén --
+-- Insertar 2 almacenes --
 INSERT INTO Almacen (nombre, ubicacion) 
-VALUES ('Almacén Central', 'Calle hacia moncagua 523');
+VALUES 
+    ('Almacén Central', 'Calle hacia Moncagua 523'),
+    ('Almacén Norte', 'Avenida Principal 789');
 
--- Insertar una zona --
+-- Insertar zonas para el Almacén Central (id = 1) --
 INSERT INTO Zona (nombre, id_almacen) 
-VALUES ('Zona A', 1);
+VALUES 
+    ('Zona A', 1),
+    ('Zona B', 1);
 
--- Insertar un pasillo --
+-- Insertar zonas para el Almacén Norte (id = 2) --
+INSERT INTO Zona (nombre, id_almacen) 
+VALUES 
+    ('Zona C', 2),
+    ('Zona D', 2);
+
+-- Insertar pasillos para Almacén Central --
 INSERT INTO Pasillo (nombre, id_zona) 
-VALUES ('Pasillo 1', 1);
+VALUES 
+    ('Pasillo 1', 1),  
+    ('Pasillo 2', 1),  
+    ('Pasillo 3', 2);  
 
--- Insertar una estantería --
+-- Insertar pasillos para Almacén Norte --
+INSERT INTO Pasillo (nombre, id_zona) 
+VALUES 
+    ('Pasillo 4', 3), 
+    ('Pasillo 5', 4);  
+
+-- Insertar estanterías para Almacén Central --
 INSERT INTO Estanteria (nombre, id_pasillo) 
-VALUES ('Estantería 1', 1);
+VALUES 
+    ('Estantería 1', 1), 
+    ('Estantería 2', 1),  
+    ('Estantería 3', 2),  
+    ('Estantería 4', 3);  
 
--- Insertar una posición --
+-- Insertar estanterías para  Almacén Norte --
+INSERT INTO Estanteria (nombre, id_pasillo) 
+VALUES 
+    ('Estantería 5', 4),  
+    ('Estantería 6', 5);  
+
+-- Insertar posiciones para Almacén Central --
 INSERT INTO Posicion (nombre, id_estanteria) 
-VALUES ('Posición 1', 1);
+VALUES 
+    ('Posición 1', 1),  
+    ('Posición 2', 1),  
+    ('Posición 3', 2), 
+    ('Posición 4', 3);  
+
+-- Insertar posiciones para Almacén Norte --
+INSERT INTO Posicion (nombre, id_estanteria) 
+VALUES 
+    ('Posición 5', 4),  
+    ('Posición 6', 5);  
 
 -- Insertar un empleado --
 INSERT INTO Empleado (nombre, cargo) 
@@ -226,12 +265,3 @@ WHERE Mercancia.eliminado_at IS NULL;
 UPDATE Pasillo
 SET eliminado_at = CURRENT_TIMESTAMP
 WHERE id = 1;
-
-
-
-
-
-
-
-
-
