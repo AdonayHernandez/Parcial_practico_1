@@ -72,8 +72,8 @@ CREATE TABLE Cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_empresa VARCHAR(100) NOT NULL,
     sector_actividad VARCHAR(100) NOT NULL,
-    direccion_fiscal VARCHAR(255) NOT NULL,
-    persona_contacto VARCHAR(100) NOT NULL,
+    direccion_fiscal VARCHAR(155) NOT NULL,
+    persona_contacto VARCHAR(80) NOT NULL,
     limite_credito DECIMAL(12,2) NOT NULL,
     clasificacion ENUM('Pequeño', 'Mediano', 'Grande') NOT NULL,
     eliminado_at TIMESTAMP NULL
@@ -145,7 +145,7 @@ VALUES
 INSERT INTO Vehiculo (matricula, marca, modelo, anio, capacidad_carga, id_tipo_combustible, consumo_promedio, fecha_adquisicion, estado)
 VALUES 
     ('123ABC', 'Toyota', 'Dyna', 2025, 15000.00, 1, 25.5, '2025-02-28', 'Activo'),
-    ('456DEF', 'Isuzu', 'NPR', 2024, 12000.00, 2, 20.0, '2025-2-27', 'En mantenimiento');
+    ('456DEF', 'Isuzu', 'NPR', 2024, 12000.00, 2, 20.0, '2024-10-25', 'En mantenimiento');
 
 -- Insertar clientes --
 INSERT INTO Cliente (nombre_empresa, sector_actividad, direccion_fiscal, persona_contacto, limite_credito, clasificacion)
