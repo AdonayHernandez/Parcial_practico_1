@@ -1,0 +1,237 @@
+CREATE DATABASE logisticDB;
+USE logisticDB;
+
+-- Tabla de TipoCombustible  --
+CREATE TABLE TipoCombustible (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+-- Tabla de Vehículos --
+CREATE TABLE Vehiculo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    matricula VARCHAR(20) UNIQUE NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    anio INT NOT NULL,
+    capacidad_carga DECIMAL(10,2) NOT NULL,
+    id_tipo_combustible INT,
+    consumo_promedio DECIMAL(5,2) NOT NULL,
+    fecha_adquisicion DATE NOT NULL,
+    estado ENUM('Activo', 'En mantenimiento', 'Fuera de servicio') NOT NULL,
+    eliminado_at TIMESTAMP NULL,
+    FOREIGN KEY (id_tipo_combustible) REFERENCES TipoCombustible(id)
+);
+
+-- Tabla de Almacenes --
+CREATE TABLE Almacen (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ubicacion VARCHAR(255) NOT NULL,
+    eliminado_at TIMESTAMP NULL
+);
+
+-- Tabla de Zonas --
+CREATE TABLE Zona (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    id_almacen INT,
+    eliminado_at TIMESTAMP NULL,
+    FOREIGN KEY (id_almacen) REFERENCES Almacen(id) ON DELETE CASCADE
+);
+
+-- Tabla de Pasillos --
+CREATE TABLE Pasillo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    id_zona INT,
+    eliminado_at TIMESTAMP NULL,
+    FOREIGN KEY (id_zona) REFERENCES Zona(id) ON DELETE CASCADE
+);
+
+-- Tabla de Estanterías --
+CREATE TABLE Estanteria (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    id_pasillo INT,
+    eliminado_at TIMESTAMP NULL,
+    FOREIGN KEY (id_pasillo) REFERENCES Pasillo(id) ON DELETE CASCADE
+);
+
+-- Tabla de Posiciones --
+CREATE TABLE Posicion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    id_estanteria INT,
+    eliminado_at TIMESTAMP NULL,
+    FOREIGN KEY (id_estanteria) REFERENCES Estanteria(id) ON DELETE CASCADE
+);
+
+-- Tabla de Clientes --
+CREATE TABLE Cliente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_empresa VARCHAR(100) NOT NULL,
+    sector_actividad VARCHAR(100) NOT NULL,
+    direccion_fiscal VARCHAR(255) NOT NULL,
+    persona_contacto VARCHAR(100) NOT NULL,
+    limite_credito DECIMAL(12,2) NOT NULL,
+    clasificacion ENUM('Pequeño', 'Mediano', 'Grande') NOT NULL,
+    eliminado_at TIMESTAMP NULL
+);
+
+-- Tabla de Categorías --
+CREATE TABLE Categoria (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL
+);
+
+-- Tabla de Mercancías --
+CREATE TABLE Mercancia (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigo VARCHAR(50) UNIQUE NOT NULL,
+    descripcion TEXT NOT NULL,
+    id_categoria INT,
+    dimensiones VARCHAR(50) NOT NULL,
+    peso DECIMAL(10,2) NOT NULL,
+    valor_declarado DECIMAL(12,2) NOT NULL,
+    requisitos_manipulacion TEXT NOT NULL,
+    id_cliente INT,
+    eliminado_at TIMESTAMP NULL,
+    FOREIGN KEY (id_categoria) REFERENCES Categoria(id),
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id) ON DELETE SET NULL
+);
+
+-- Tabla de Empleados --
+CREATE TABLE Empleado (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    cargo ENUM('Conductor', 'Almacén', 'Administrativo', 'Gerente') NOT NULL,
+    eliminado_at TIMESTAMP NULL
+);
+
+-- Tabla de Operaciones --
+CREATE TABLE Operacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    id_vehiculo INT,
+    id_mercancia INT,
+    tipo_operacion ENUM('Recogida', 'Entrega', 'Almacenaje') NOT NULL,
+    id_almacen INT,
+    fecha_operacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_vehiculo) REFERENCES Vehiculo(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_mercancia) REFERENCES Mercancia(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_almacen) REFERENCES Almacen(id) ON DELETE SET NULL
+);
+
+-- Tabla  Historial  Mantenimiento --
+CREATE TABLE Mantenimiento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_vehiculo INT,
+    tipo_mantenimiento ENUM('Preventivo', 'Correctivo') NOT NULL,
+    fecha DATE NOT NULL,
+    descripcion TEXT NOT NULL,
+    costo DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_vehiculo) REFERENCES Vehiculo(id) ON DELETE CASCADE
+);
+
+-- Inserción de datos --
+-- Insertar tipos de combustible
+INSERT INTO TipoCombustible (nombre) 
+VALUES 
+    ('Diesel'), ('Gasolina'), ('Eléctrico'), ('Híbrido');
+
+-- Insertar vehículos --
+INSERT INTO Vehiculo (matricula, marca, modelo, anio, capacidad_carga, id_tipo_combustible, consumo_promedio, fecha_adquisicion, estado)
+VALUES 
+    ('123ABC', 'Toyota', 'Dyna', 2025, 15000.00, 1, 25.5, '2025-02-28', 'Activo'),
+    ('456DEF', 'Isuzu', 'NPR', 2024, 12000.00, 2, 20.0, '2024-10-15', 'En mantenimiento');
+
+-- Insertar clientes --
+INSERT INTO Cliente (nombre_empresa, sector_actividad, direccion_fiscal, persona_contacto, limite_credito, clasificacion)
+VALUES 
+    ('Electrónica Loki', 'Logística', 'Calle Moncagua 523', 'Erick Lopez', 100000.00, 'Grande'),
+    ('Distribuidora Omega', 'Retail', 'Avenida Central 456', 'Marcos Gómez', 75000.00, 'Mediano');
+
+-- Insertar categorías --
+INSERT INTO Categoria (nombre) 
+VALUES 
+    ('Electrónicos'), ('Muebles');
+
+-- Insertar mercancías --
+INSERT INTO Mercancia (codigo, descripcion, id_categoria, dimensiones, peso, valor_declarado, requisitos_manipulacion, id_cliente)
+VALUES 
+    ('VERCT001', 'Televisor 43 pulgadas', 1, '120x70x10 cm', 15.5, 1200.00, 'Frágil', 1),
+    ('MUEBL002', 'Sofá de 3 plazas', 2, '200x90x100 cm', 50.0, 850.00, 'Manipular con cuidado', 2);
+
+-- Insertar un almacén --
+INSERT INTO Almacen (nombre, ubicacion) 
+VALUES ('Almacén Central', 'Calle Falsa 123');
+
+-- Insertar una zona --
+INSERT INTO Zona (nombre, id_almacen) 
+VALUES ('Zona A', 1);
+
+-- Insertar un pasillo --
+INSERT INTO Pasillo (nombre, id_zona) 
+VALUES ('Pasillo 1', 1);
+
+-- Insertar una estantería --
+INSERT INTO Estanteria (nombre, id_pasillo) 
+VALUES ('Estantería 1', 1);
+
+-- Insertar una posición --
+INSERT INTO Posicion (nombre, id_estanteria) 
+VALUES ('Posición 1', 1);
+
+-- Insertar un empleado --
+INSERT INTO Empleado (nombre, cargo) 
+VALUES ('Juan Pérez', 'Almacén');
+
+-- Insertar una operación --
+INSERT INTO Operacion (id_cliente, id_vehiculo, id_mercancia, tipo_operacion, id_almacen) 
+VALUES (1, 1, 1, 'Recogida', 1);
+
+-- Insertar un mantenimiento --
+INSERT INTO Mantenimiento (id_vehiculo, tipo_mantenimiento, fecha, descripcion, costo) 
+VALUES (1, 'Preventivo', '2025-03-01', 'Cambio de aceite', 150.00);
+
+-- Consultas solicitadas --
+/* a) Mostrar el listado de todos los almacenes, sus zonas, pasillos, estantes y posiciones */
+SELECT 
+    a.nombre AS almacen, 
+    COALESCE(z.nombre, 'Sin Zona') AS zona, 
+    COALESCE(p.nombre, 'Sin Pasillo') AS pasillo, 
+    COALESCE(e.nombre, 'Sin Estantería') AS estanteria, 
+    COALESCE(pos.nombre, 'Sin Posición') AS posicion
+FROM Almacen a
+LEFT JOIN Zona z ON a.id = z.id_almacen
+LEFT JOIN Pasillo p ON z.id = p.id_zona
+LEFT JOIN Estanteria e ON p.id = e.id_pasillo
+LEFT JOIN Posicion pos ON e.id = pos.id_estanteria
+WHERE a.eliminado_at IS NULL;
+
+/* b) Mostrar el listado de todas las empresas */
+SELECT nombre_empresa, sector_actividad, direccion_fiscal
+FROM Cliente
+WHERE eliminado_at IS NULL;
+
+/* c) Mostrar el listado de todas las mercancías */
+SELECT codigo, descripcion, categoria.nombre AS categoria, peso, valor_declarado
+FROM Mercancia
+JOIN Categoria ON Mercancia.id_categoria = Categoria.id
+WHERE Mercancia.eliminado_at IS NULL;
+
+/* d) Eliminar pasillos por id */
+UPDATE Pasillo
+SET eliminado_at = CURRENT_TIMESTAMP
+WHERE id = 1;
+
+
+
+
+
+
+
+
+
