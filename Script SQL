@@ -145,7 +145,7 @@ VALUES
 INSERT INTO Vehiculo (matricula, marca, modelo, anio, capacidad_carga, id_tipo_combustible, consumo_promedio, fecha_adquisicion, estado)
 VALUES 
     ('123ABC', 'Toyota', 'Dyna', 2025, 15000.00, 1, 25.5, '2025-02-28', 'Activo'),
-    ('456DEF', 'Isuzu', 'NPR', 2024, 12000.00, 2, 20.0, '2024-10-15', 'En mantenimiento');
+    ('456DEF', 'Isuzu', 'NPR', 2024, 12000.00, 2, 20.0, '2025-2-27', 'En mantenimiento');
 
 -- Insertar clientes --
 INSERT INTO Cliente (nombre_empresa, sector_actividad, direccion_fiscal, persona_contacto, limite_credito, clasificacion)
@@ -166,7 +166,7 @@ VALUES
 
 -- Insertar un almacén --
 INSERT INTO Almacen (nombre, ubicacion) 
-VALUES ('Almacén Central', 'Calle Falsa 123');
+VALUES ('Almacén Central', 'Calle hacia moncagua 523');
 
 -- Insertar una zona --
 INSERT INTO Zona (nombre, id_almacen) 
@@ -186,7 +186,7 @@ VALUES ('Posición 1', 1);
 
 -- Insertar un empleado --
 INSERT INTO Empleado (nombre, cargo) 
-VALUES ('Juan Pérez', 'Almacén');
+VALUES ('Antonio Martinez', 'Almacén');
 
 -- Insertar una operación --
 INSERT INTO Operacion (id_cliente, id_vehiculo, id_mercancia, tipo_operacion, id_almacen) 
